@@ -1,1 +1,1 @@
-from . import command
+from . import command, parser

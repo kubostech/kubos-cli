@@ -43,6 +43,7 @@ def main():
     # globalconf, share global arguments between modules, internal
     import yotta.lib.globalconf as globalconf
     import yotta.options as options
+    import kubos.options as kubos_options
     # logging setup, , setup the logging system, internal
     from yotta.lib import logging_setup
 
@@ -50,7 +51,7 @@ def main():
 
     # we override many argparse things to make options more re-usable across
     # subcommands, and allow lazy loading of subcommand modules:
-    parser = options.parser.ArgumentParser(
+    parser = kubos_options.parser.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter,
         description='Kubos-CLI For working with Kubos Projects.\n'+
         'For more detailed help on each subcommand, run: kubos <subcommand> --help'
@@ -70,6 +71,8 @@ def main():
     local_config = sdk_config.load_config()
     add_kubos_command = functools.partial(kubos_options.command.add_command, local_config, subparser, 'kubos') #add our own implemented commands
     add_yotta_command = functools.partial(kubos_options.command.add_command, local_config, subparser, 'yotta') #add from the default yotta commands
+    add_kubos_command_sync = functools.partial(kubos_options.command.add_command_sync, local_config, subparser, 'kubos') #add our own implemented commands
+    add_kubos_command_sync('target', 'target', 'Set or display the current target.')
     add_kubos_command('init', 'init', 'Create a new module.')
     add_yotta_command('build', 'build',
         'Build the current module. Options can be passed to the underlying '+
@@ -101,7 +104,6 @@ def main():
         'Symlink a target'
     )
     add_kubos_command('update', 'update', 'Download newer versions of the KubOS Modules')
-    add_kubos_command('target', 'target', 'Set or display the target device.')
     add_yotta_command('debug', 'debug', 'Attach a debugger to the current target.  Requires target support.')
     add_yotta_command('test', 'test_subcommand',
         'Run the tests for the current module on the current target. A build '+

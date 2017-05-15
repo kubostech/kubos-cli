@@ -17,6 +17,13 @@ class SDKCommand(object):
             formatter_class=argparse.RawTextHelpFormatter,
             callback=self.onParserAdded)
 
+    def addToSubparserSync(self, subparser):
+        subparser.add_parser_sync(
+            self.name, description=self.description, help=self.help,
+            formatter_class=argparse.RawTextHelpFormatter,
+            add_options=self.onParserAdded)
+
+
     def execCommand(self, args, following_args):
         return self.module.execCommand(args, following_args)
 
@@ -29,5 +36,13 @@ class SDKCommand(object):
 def add_command(config, subparser, *args, **kwargs):
     m = _command_class(config, *args, **kwargs)
     m.addToSubparser(subparser)
+
+def add_command_sync(config, subparser, *args, **kwargs):
+    '''
+    For argcomplete to work correctly with the target names we have to synchronously
+    load the target command and its options.
+    '''
+    m = _command_class(config, *args, **kwargs)
+    m.addToSubparserSync(subparser)
 
 _command_class = SDKCommand

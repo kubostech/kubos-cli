@@ -25,10 +25,16 @@ from yotta.options import parser
 from kubos.utils.constants import GLOBAL_TARGET_PATH
 from kubos.utils.sdk_utils import *
 
+def target_completer(prefix, parsed_args, **kwargs):
+    proj_type = get_project_type()
+    choices = load_target_list(proj_type)
+    return (c for c in choices if c.startswith(prefix))
+
+
 def addOptions(parser):
     proj_type = get_project_type()
     choices = load_target_list(proj_type)
-    parser.add_argument('set_target', nargs='?', default=None, choices=choices, help='Set a new target board or display the current target')
+    parser.add_argument('set_target', nargs='?', choices=choices, default=None, help='Set a new target board or display the current target').completer = target_completer
     parser.add_argument('-l', '--list', action='store_true', default=False, help='List all of the available target names')
 
 
