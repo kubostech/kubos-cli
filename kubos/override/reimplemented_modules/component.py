@@ -15,8 +15,10 @@
 
 from yotta.lib.component import *
 
+
 class KubosComponent(Component):
     def getLinkWholeArchive(self):
         return self.description.get('linkWholeArchive', False)
+
 
 Component = KubosComponent

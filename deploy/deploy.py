@@ -22,6 +22,7 @@ this_dir = os.path.dirname(os.path.abspath(__file__))
 cli_root_dir = os.path.dirname(this_dir)
 module_json = os.path.join(cli_root_dir, 'module.json')
 
+
 def main():
     '''
     This script updates, versions, and builds new versions of the Kubos CLI.
@@ -68,10 +69,11 @@ def get_module_version():
 def bump_and_write_version(version):
     version_fields = version.split('.')
 
-    if len(version_fields) == 4:  #Add a patch number
-        version_fields[3] = str(int(version_fields[3]) + 1) #bump the version number by 1 and store it as a string
+    if len(version_fields) == 4:  # Add a patch number
+        # bump the version number by 1 and store it as a string
+        version_fields[3] = str(int(version_fields[3]) + 1)
         version = '.'.join(version_fields)
-    elif len(version_fields) == 3:# bump the version number
+    elif len(version_fields) == 3:  # bump the version number
         version = version + '.1'
 
     with open(module_json, 'r') as module_file:
@@ -84,19 +86,23 @@ def bump_and_write_version(version):
                                      sort_keys=True,
                                      indent=4,
                                      separators=(',', ': '))
-                                     )
+                          )
     return version
 
 
 def commit_and_push(version_number):
-    run_cmd('git', 'config', '--global', 'user.name', os.environ['GITHUB_USERNAME'])
-    run_cmd('git', 'config', '--global', 'user.email', os.environ['GITHUB_EMAIL'])
+    run_cmd('git', 'config', '--global', 'user.name',
+            os.environ['GITHUB_USERNAME'])
+    run_cmd('git', 'config', '--global',
+            'user.email', os.environ['GITHUB_EMAIL'])
     run_cmd('git', 'add', 'module.json')
     print 'Committing the version update...'
-    run_cmd('git', 'commit', '-m', '"Bump version to %s. [ci skip]"' % version_number) #we want ci to skip to prevent an infinite release cycle.
+    # we want ci to skip to prevent an infinite release cycle.
+    run_cmd('git', 'commit', '-m',
+            '"Bump version to %s. [ci skip]"' % version_number)
 
     print 'Pushing the commit to origin...'
-    run_cmd('git', 'push', 'origin', 'master') #push the commit
+    run_cmd('git', 'push', 'origin', 'master')  # push the commit
 
 
 def build_wheel():

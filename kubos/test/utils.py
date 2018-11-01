@@ -22,8 +22,8 @@ import unittest
 
 
 class KubosTestCase(unittest.TestCase):
-    test_arg = None #Additional command line argument needed by any specific test cases
-    test_command = None #Not all test cases define a 'test_command'
+    test_arg = None  # Additional command line argument needed by any specific test cases
+    test_command = None  # Not all test cases define a 'test_command'
 
     def setUp(self):
         '''
@@ -37,7 +37,6 @@ class KubosTestCase(unittest.TestCase):
         self.base_dir = tempfile.mkdtemp()
         os.chdir(self.base_dir)
 
-
     def assert_default_yotta_call(self):
         '''
         This tests to ensure that the default execCommand from yotta was called
@@ -48,7 +47,6 @@ class KubosTestCase(unittest.TestCase):
         args, kwargs = call_list[0]
         arg_dict = vars(args[0])
         self.assertTrue(arg_dict['subcommand_name'] == self.test_command)
-
 
     def tearDown(self):
         '''
@@ -62,6 +60,5 @@ class KubosTestCase(unittest.TestCase):
             sys.argv.remove(self.test_command)
         except ValueError:
             pass
-        if self.test_arg in sys.argv: # Not all tests requrire an additional argument
+        if self.test_arg in sys.argv:  # Not all tests requrire an additional argument
             sys.argv.remove(self.test_arg)
-

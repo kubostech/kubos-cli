@@ -16,19 +16,22 @@
 from yotta.options import parser
 
 from kubos.utils import git_utils, sdk_utils
-from kubos.utils.constants import  KUBOS_SRC_DIR
+from kubos.utils.constants import KUBOS_SRC_DIR
+
 
 def addOptions(parser):
     group = parser.add_mutually_exclusive_group(required=True)
-    #Nargs has to be optional for the mutually exclusive arguments - but the required=True
-    #specifies that at least one of them has to be provided or argparse will thrown an error
-    group.add_argument('-b', '--branch', nargs='?', default=None, help='Set the branch flag to specify to checkout a branch, not a tag')
-    group.add_argument('set_version',    nargs='?', default=None, help='Set a specific version of the KubOS modules to build your projects against.')
+    # Nargs has to be optional for the mutually exclusive arguments - but the required=True
+    # specifies that at least one of them has to be provided or argparse will thrown an error
+    group.add_argument('-b', '--branch', nargs='?', default=None,
+                       help='Set the branch flag to specify to checkout a branch, not a tag')
+    group.add_argument('set_version',    nargs='?', default=None,
+                       help='Set a specific version of the KubOS modules to build your projects against.')
 
 
 def execCommand(args, following_args):
     version = args.set_version
-    branch  = args.branch
+    branch = args.branch
     kubos_repo = git_utils.get_repo(KUBOS_SRC_DIR)
     if branch:
         git_utils.checkout_and_update_version(branch, kubos_repo)

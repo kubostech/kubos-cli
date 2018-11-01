@@ -43,20 +43,21 @@ def create_release(version):
     This function returns the URI template for uploading a release asset
     '''
     headers = {
-                'Content-type': 'application/json',
-                'Accept': 'application/json'
-              }
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
+    }
 
-    data    = {
-                'tag_name': version,
-                'target_commitish': 'master',
-                'name': version,
-                'body': '',
+    data = {
+        'tag_name': version,
+        'target_commitish': 'master',
+        'name': version,
+        'body': '',
                 'draft': False,
                 'prerelease': False
-              }
+    }
 
-    res = requests.post(release_endpoint, auth=auth, headers=headers, data=json.dumps(data))
+    res = requests.post(release_endpoint, auth=auth,
+                        headers=headers, data=json.dumps(data))
     res.raise_for_status()
     return res.json()['upload_url']
 
@@ -67,9 +68,9 @@ def upload_wheel(version, uri_template):
     '''
     print 'Uploading the wheel build...'
     headers = {
-                'Content-type': 'application/octet-stream',
-                'Accept': 'application/json'
-              }
+        'Content-type': 'application/octet-stream',
+        'Accept': 'application/json'
+    }
 
     template = URITemplate(uri_template)
     wheel_path = get_wheel_file_path()
@@ -84,7 +85,8 @@ def get_wheel_file_path():
     dist_dir = os.path.join(this_dir, '..', 'dist')
     if os.path.isdir(dist_dir):
         for _file in os.listdir(dist_dir):
-            if _file.endswith('.whl'): #Running in a CD environment, there will only be a single wheel build in the dist/ folder
+            # Running in a CD environment, there will only be a single wheel build in the dist/ folder
+            if _file.endswith('.whl'):
                 return os.path.join(dist_dir, _file)
     print 'Unable to find the wheel build under directory %s.. Aborting.' % dist_dir
     sys.exit(1)
@@ -93,4 +95,3 @@ def get_wheel_file_path():
 def github_release(version):
     uri_template = create_release(version)
     upload_wheel(version, uri_template)
-

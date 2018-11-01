@@ -19,13 +19,14 @@ from pip.utils import get_installed_version
 
 from kubos import version
 
+
 class VersionTest(unittest.TestCase):
     def test_add_options(self):
         parser = MagicMock()
         parser.add_argument = MagicMock()
         version.addOptions(parser)
-        parser.add_argument.assert_called_with('-l', '--list', action='store_true', \
-            default=False, help='List all of the locally available KubOS source versions')
+        parser.add_argument.assert_called_with('-l', '--list', action='store_true',
+                                               default=False, help='List all of the locally available KubOS source versions')
 
     @patch('kubos.utils.git_utils.get_active_kubos_version')
     @patch('logging.info')
@@ -37,7 +38,8 @@ class VersionTest(unittest.TestCase):
 
         get_active_kubos_version.assert_called()
         calls = [
-            call('Kubos-CLI version    : %s' % 'v' + get_installed_version('kubos-cli')),
+            call('Kubos-CLI version    : %s' %
+                 'v' + get_installed_version('kubos-cli')),
             call('Kubos Source version : %s' % kubos_version)
         ]
         info.assert_has_calls(calls)
@@ -57,12 +59,13 @@ class VersionTest(unittest.TestCase):
         get_tag_list.assert_called()
         print_tag_list.assert_called()
         calls = [
-            call('Kubos-CLI version    : %s' % 'v' + get_installed_version('kubos-cli')),
+            call('Kubos-CLI version    : %s' %
+                 'v' + get_installed_version('kubos-cli')),
             call('Kubos Source version : %s' % kubos_version),
             call('There\'s not an active Kubos source version..'),
             call('The available versions are:'),
-            call('Please run kubos use <version> (with one of the above versions)' + \
-                'to checkout a version of the source before working with a project.')
+            call('Please run kubos use <version> (with one of the above versions)' +
+                 'to checkout a version of the source before working with a project.')
         ]
         info.assert_has_calls(calls)
 
@@ -76,7 +79,8 @@ class VersionTest(unittest.TestCase):
         version.execCommand(None, None)
 
         calls = [
-            call('Kubos-CLI version    : %s' % 'v' +  get_installed_version('kubos-cli')),
+            call('Kubos-CLI version    : %s' %
+                 'v' + get_installed_version('kubos-cli')),
             call('Kubos Source version : %s' % kubos_version),
             call('There are not any local versions of the kubos source currently.'),
             call('Please run `kubos update` to pull the kubos source before running `kubos version` again')

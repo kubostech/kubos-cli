@@ -20,10 +20,12 @@ from pip.utils import get_installed_version
 from kubos import use
 from kubos.utils.constants import *
 
+
 class Args():
     def __init__(self):
         self.set_version = None
         self.branch = None
+
 
 class UseTest(unittest.TestCase):
     @patch('kubos.utils.sdk_utils.link_to_global_cache')
@@ -63,6 +65,7 @@ class UseTest(unittest.TestCase):
         check_provided_version.assert_called_with(version, kubos_repo)
         purge_global_cache.assert_called()
         link_to_global_cache.assert_called_with(KUBOS_SRC_DIR)
+
 
 if __name__ == '__main__':
     unittest.main()

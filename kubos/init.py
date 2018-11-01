@@ -27,32 +27,40 @@ from yotta.lib.detect import systemDefaultTarget
 from kubos.utils.constants import KUBOS_RT_EXAMPLE_DIR, KUBOS_LINUX_EXAMPLE_DIR, KUBOS_SRC_DIR
 from kubos.utils import sdk_utils
 
+
 def addOptions(parser):
     parser.add_argument('proj_name', nargs=1, help='specify the project name')
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-l', '--linux', action='store_true', help='Initialize Kubos SDK project for KubOS Linux')
-    group.add_argument('-r', '--rt', action='store_true', default=True, help='Initialize Kubos SDK project for KubOS RT')
+    group.add_argument('-l', '--linux', action='store_true',
+                       help='Initialize Kubos SDK project for KubOS Linux')
+    group.add_argument('-r', '--rt', action='store_true', default=True,
+                       help='Initialize Kubos SDK project for KubOS RT')
+
 
 def execCommand(args, following_args):
-    proj_name = vars(args)['proj_name'][0] #vars returns a dict of args. proj_name is a list since nargs=1
+    # vars returns a dict of args. proj_name is a list since nargs=1
+    proj_name = vars(args)['proj_name'][0]
     logging.info('Initializing project: %s ...' % proj_name)
     proj_name_dir = os.path.join(os.getcwd(), proj_name)
 
     if os.path.isdir(proj_name_dir):
-        logging.warning('The project directory %s already exists. Not overwritting the current directory' % proj_name_dir)
+        logging.warning(
+            'The project directory %s already exists. Not overwritting the current directory' % proj_name_dir)
         sys.exit(1)
 
-    #Copy in the correct example directory based on the desired OS
+    # Copy in the correct example directory based on the desired OS
     example_dir = KUBOS_LINUX_EXAMPLE_DIR if args.linux else KUBOS_RT_EXAMPLE_DIR
-    shutil.copytree(example_dir, proj_name_dir, ignore=shutil.ignore_patterns('.git'))
+    shutil.copytree(example_dir, proj_name_dir,
+                    ignore=shutil.ignore_patterns('.git'))
 
-    #change project name in module.json
+    # change project name in module.json
     module_json = os.path.join(proj_name_dir, 'module.json')
     with open(module_json, 'r') as init_module_json:
         module_data = json.load(init_module_json)
     module_data['name'] = proj_name
-    module_data['repository']['url'] = 'git://<repository_url>' #These fields print warnings if they're
-    module_data['homepage'] = 'https://<homepage>'              #left empty
+    # These fields print warnings if they're
+    module_data['repository']['url'] = 'git://<repository_url>'
+    module_data['homepage'] = 'https://<homepage>'  # left empty
     with open(module_json, 'w') as final_module_json:
         str_module_data = json.dumps(module_data,
                                      indent=4,
@@ -61,7 +69,7 @@ def execCommand(args, following_args):
     os.chdir(proj_name_dir)
     sdk_utils.link_global_cache_to_project(proj_name_dir)
 
-    #remove the troublesome rt dependencies if needed
+    # remove the troublesome rt dependencies if needed
     proj_type = sdk_utils.get_project_type()
     if proj_type == 'rt':
         remove_unruly_rt_dependencies()
@@ -75,12 +83,14 @@ def remove_unruly_rt_dependencies():
     are initialized.
     '''
 
-    dependency_list = ['cmocka'] #add new module names to the list if new build issues are found in the future.
+    # add new module names to the list if new build issues are found in the future.
+    dependency_list = ['cmocka']
 
     for dep in dependency_list:
         path = os.path.join(os.getcwd(), 'yotta_modules', dep)
         if os.path.islink(path):
             os.unlink(path)
+
 
 def get_target_list():
     '''
@@ -97,5 +107,3 @@ def get_target_list():
             data = json.load(json_file)
             available_target_list.append(data['name'])
     return available_target_list
-
-

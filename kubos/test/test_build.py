@@ -19,7 +19,8 @@ import sys
 import unittest
 import yotta.build
 
-from kubos.test.utils import  KubosTestCase
+from kubos.test.utils import KubosTestCase
+
 
 class KubosBuildTest(KubosTestCase):
     '''
@@ -27,6 +28,7 @@ class KubosBuildTest(KubosTestCase):
     this test only looks to make sure that the yotta implementation is called.
     There's a separate yotta unit test to test the build functionality.
     '''
+
     def setUp(self):
         super(KubosBuildTest, self).setUp()
         self.test_function = mock.MagicMock()
@@ -34,14 +36,13 @@ class KubosBuildTest(KubosTestCase):
         self.test_command = 'build'
         sys.argv.append(self.test_command)
 
-
     def test_build(self):
         kubos.main()
         self.assert_default_yotta_call()
 
-
     def tearDown(self):
         super(KubosBuildTest, self).tearDown()
+
 
 if __name__ == '__main__':
     unittest.main()

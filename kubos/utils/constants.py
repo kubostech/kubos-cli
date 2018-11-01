@@ -32,14 +32,15 @@ KUBOS_TARGET_CACHE_FILE = os.path.join(KUBOS_DIR, 'targets.json')
 
 KUBOS_RESOURCE_DIR = os.path.join(resource_filename(__name__, ''), '..')
 SDK_MODULE_JSON = os.path.join(KUBOS_RESOURCE_DIR, 'module.json')
-GLOBAL_TARGET_PATH  = os.path.join('/', 'usr', 'local', 'lib', 'yotta_targets')
-GLOBAL_MODULE_PATH  = os.path.join('/', 'usr', 'local', 'lib', 'yotta_modules')
+GLOBAL_TARGET_PATH = os.path.join('/', 'usr', 'local', 'lib', 'yotta_targets')
+GLOBAL_MODULE_PATH = os.path.join('/', 'usr', 'local', 'lib', 'yotta_modules')
 
 LINUX_KEY = 'linux-targets'
-RT_KEY    = 'rt-targets'
+RT_KEY = 'rt-targets'
 
 COMPLETION_RESOURCE_DIR = os.path.join(KUBOS_RESOURCE_DIR, 'completion')
-COMPLETION_SCRIPT = os.path.join(COMPLETION_RESOURCE_DIR, 'kubos_completion.bash')
+COMPLETION_SCRIPT = os.path.join(
+    COMPLETION_RESOURCE_DIR, 'kubos_completion.bash')
 COMPLETION_OPTIONS_FILE = os.path.join(COMPLETION_RESOURCE_DIR, 'options.json')
 COMPLETION_PYTHON_FILE = os.path.join(COMPLETION_RESOURCE_DIR, 'completion.py')
 

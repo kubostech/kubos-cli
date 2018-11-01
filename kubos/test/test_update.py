@@ -20,9 +20,11 @@ from pip.utils import get_installed_version
 from kubos import update
 from kubos.utils.constants import *
 
+
 class Args():
     def __init__(self):
         self.component = None
+
 
 class UpdateTest(unittest.TestCase):
     @patch('kubos.update.update_source_modules')
@@ -69,7 +71,8 @@ class UpdateTest(unittest.TestCase):
 
         check_call.assert_called_with(update.INSTALL_COMMAND)
         info.assert_called_with('Updating the Kubos CLI...')
-        error.assert_called_with('There was an issue updating the Kubos CLI module. See the above log for the error details.')
+        error.assert_called_with(
+            'There was an issue updating the Kubos CLI module. See the above log for the error details.')
 
     @patch('kubos.utils.git_utils.get_tag_list')
     @patch('kubos.utils.git_utils.get_latest_tag')
@@ -107,10 +110,12 @@ class UpdateTest(unittest.TestCase):
         ]
         info.assert_has_calls(info_calls)
         start_spinner.assert_called()
-        clone_repo.assert_called_with(update.KUBOS_SRC_DIR, update.KUBOS_SRC_URL)
+        clone_repo.assert_called_with(
+            update.KUBOS_SRC_DIR, update.KUBOS_SRC_URL)
         clone_example_repo_calls = [
             call(update.KUBOS_RT_EXAMPLE_DIR, update.KUBOS_RT_EXAMPLE_URL),
-            call(update.KUBOS_LINUX_EXAMPLE_DIR, update.KUBOS_LINUX_EXAMPLE_URL)
+            call(update.KUBOS_LINUX_EXAMPLE_DIR,
+                 update.KUBOS_LINUX_EXAMPLE_URL)
         ]
         clone_example_repo.assert_has_calls(clone_example_repo_calls)
         stop_spinner.assert_called_with(spinner)
@@ -121,6 +126,7 @@ class UpdateTest(unittest.TestCase):
         check_provided_version.assert_has_calls(check_provided_version_calls)
         get_latest_tag.assert_called_with(tag_list)
         get_tag_list.assert_called_with(src_repo)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,15 +19,15 @@ from yotta.options import parser
 from kubos.utils.sdk_utils import *
 from kubos.init import remove_unruly_rt_dependencies
 
+
 def addOptions(parser):
     parser.add_argument('-a', '--all', action='store_true', default=False,
-            help='Link all modules (and targets) from the global cache into the local project.')
+                        help='Link all modules (and targets) from the global cache into the local project.')
     parser.add_argument('module_or_path', default=None, nargs='?',
-            help='Link a globally installed (or globally linked) module into '+
-                 'the current module\'s dependencies. If ommited, globally '+
-                 'link the current module.'
-    )
-
+                        help='Link a globally installed (or globally linked) module into ' +
+                        'the current module\'s dependencies. If ommited, globally ' +
+                        'link the current module.'
+                        )
 
 
 def execCommand(args, following_args):
@@ -48,6 +48,5 @@ def execCommand(args, following_args):
         if proj_type == 'rt':
             remove_unruly_rt_dependencies()
     else:
-        #pass in the args argparse.Namespace object - not the dictionary from above
+        # pass in the args argparse.Namespace object - not the dictionary from above
         link.execCommand(args, following_args)
-
