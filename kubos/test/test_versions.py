@@ -20,6 +20,7 @@ from pip.utils import get_installed_version
 from kubos import versions
 from kubos.utils.constants import *
 
+
 class VersionsTest(unittest.TestCase):
     @patch('kubos.utils.git_utils.print_tag_list')
     @patch('kubos.utils.git_utils.get_latest_tag')
@@ -28,6 +29,7 @@ class VersionsTest(unittest.TestCase):
     @patch('logging.info')
     def test_exec_command(self, info, get_repo, get_tag_list, get_latest_tag, print_tag_list):
         filterArg = 'test-filter'
+
         class Args():
             def __init__(self):
                 self.filter = filterArg
@@ -57,7 +59,8 @@ class VersionsTest(unittest.TestCase):
     def test_exec_command_with_no_directory(self, info):
         versions.execCommand(None, None)
 
-        info.assert_called_with('No versions are locally available. Please run `kubos update` to pull all of the available source versions.')
+        info.assert_called_with(
+            'No versions are locally available. Please run `kubos update` to pull all of the available source versions.')
 
 
 if __name__ == '__main__':

@@ -19,17 +19,18 @@ from pip.utils import get_installed_version
 
 from kubos import link
 
+
 class LinkTest(unittest.TestCase):
     def test_add_options(self):
         parser = MagicMock()
         parser.add_argument = MagicMock()
         link.addOptions(parser)
         calls = [
-            call('-a', '--all', action='store_true', default=False, \
-            help='Link all modules (and targets) from the global cache into the local project.'),
-            call('module_or_path', default=None, nargs='?', \
-            help='Link a globally installed (or globally linked) module into '+ \
-                 'the current module\'s dependencies. If ommited, globally '+ \
+            call('-a', '--all', action='store_true', default=False,
+                 help='Link all modules (and targets) from the global cache into the local project.'),
+            call('module_or_path', default=None, nargs='?',
+                 help='Link a globally installed (or globally linked) module into ' +
+                 'the current module\'s dependencies. If ommited, globally ' +
                  'link the current module.'),
         ]
         parser.add_argument.assert_has_calls(calls)

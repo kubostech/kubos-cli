@@ -23,7 +23,8 @@ from kubos import init
 from kubos.test import utils
 from kubos.utils import constants
 from mock import patch
-from yotta.test.cli.test_target import Test_Module_JSON #A dummy module.json config
+from yotta.test.cli.test_target import Test_Module_JSON  # A dummy module.json config
+
 
 class KubosInitTest(utils.KubosTestCase):
 
@@ -31,26 +32,29 @@ class KubosInitTest(utils.KubosTestCase):
         super(KubosInitTest, self).setUp()
         self.proj_name = 'test-project'
         self.args = argparse.Namespace()
-        self.args.proj_name = [self.proj_name] # argparse returns proj_name as an array
+        # argparse returns proj_name as an array
+        self.args.proj_name = [self.proj_name]
         self.args.linux = False
-        linux_module_json = os.path.join(constants.KUBOS_LINUX_EXAMPLE_DIR, 'module.json')
-        rt_module_json = os.path.join(constants.KUBOS_RT_EXAMPLE_DIR, 'module.json')
+        linux_module_json = os.path.join(
+            constants.KUBOS_LINUX_EXAMPLE_DIR, 'module.json')
+        rt_module_json = os.path.join(
+            constants.KUBOS_RT_EXAMPLE_DIR, 'module.json')
 
-        #Set up the linux example module
+        # Set up the linux example module
         if not os.path.isdir(constants.KUBOS_LINUX_EXAMPLE_DIR):
             os.makedirs(constants.KUBOS_LINUX_EXAMPLE_DIR)
         if not os.path.isfile(linux_module_json):
             with open(linux_module_json, 'w') as mod_json:
                 mod_json.write(Test_Module_JSON)
 
-        #Set up the rt example module
+        # Set up the rt example module
         if not os.path.isdir(constants.KUBOS_RT_EXAMPLE_DIR):
             os.makedirs(constants.KUBOS_RT_EXAMPLE_DIR)
         if not os.path.isfile(rt_module_json):
             with open(rt_module_json, 'w') as mod_json:
                 mod_json.write(Test_Module_JSON)
 
-        #Set up a dummy global module and target cache
+        # Set up a dummy global module and target cache
         if not os.path.isdir(constants.GLOBAL_TARGET_PATH):
             os.makedirs(constants.GLOBAL_TARGET_PATH)
         if not os.path.isdir(constants.GLOBAL_MODULE_PATH):
@@ -78,13 +82,13 @@ class KubosInitTest(utils.KubosTestCase):
         self.proj_dir = os.path.join(self.base_dir, self.proj_name)
         with self.assertRaises(SystemExit):
             kubos.init.execCommand(self.args, None)
-            #we cd into the project directory to change the module.json file in execCommand
+            # we cd into the project directory to change the module.json file in execCommand
             os.chdir(self.base_dir)
             kubos.init.execCommand(self.args, None)
 
-
     def tearDown(self):
         super(KubosInitTest, self).tearDown()
+
 
 if __name__ == '__main__':
     unittest.main()

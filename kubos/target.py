@@ -25,17 +25,22 @@ from yotta.options import parser
 from kubos.utils.constants import GLOBAL_TARGET_PATH
 from kubos.utils.sdk_utils import *
 
+
 def addOptions(parser):
     proj_type = get_project_type()
     choices = load_target_list(proj_type)
-    parser.add_argument('set_target', nargs='?', default=None, choices=choices, help='Set a new target board or display the current target')
-    parser.add_argument('-l', '--list', action='store_true', default=False, help='List all of the available target names')
+    parser.add_argument('set_target', nargs='?', default=None, choices=choices,
+                        help='Set a new target board or display the current target')
+    parser.add_argument('-l', '--list', action='store_true',
+                        default=False, help='List all of the available target names')
 
 
 def execCommand(args, following_args):
     args = vars(args)
-    target = args['set_target'] #Confusingly the set_target key is the target the user wants to set, no the currently set target
-    default_target = args['target'] #this is either the currently set target or the default x86-linux-native target
+    # Confusingly the set_target key is the target the user wants to set, no the currently set target
+    target = args['set_target']
+    # this is either the currently set target or the default x86-linux-native target
+    default_target = args['target']
     if args['list']:
         print_target_list()
     elif target != None:
@@ -53,7 +58,8 @@ def show_target(default_target):
         target.displayCurrentTarget(target_args)
     else:
         logging.warning('No target currently set')
-        logging.info('Use the "kubos target <target name>" command to set a target')
+        logging.info(
+            'Use the "kubos target <target name>" command to set a target')
         print_target_list()
 
 
@@ -63,11 +69,11 @@ def set_target(new_target):
 
     if new_target in available_target_list:
         new_target_args = argparse.Namespace(target_or_path=new_target,
-                                              config=None,
-                                              target=new_target,
-                                              set_target=new_target,
-                                              save_global=False,
-                                              no_install=False)
+                                             config=None,
+                                             target=new_target,
+                                             set_target=new_target,
+                                             save_global=False,
+                                             no_install=False)
         target.execCommand(new_target_args, '')
         logging.info('Target Successfully Set to: %s' % new_target)
     else:
@@ -75,6 +81,7 @@ def set_target(new_target):
             logging.error('Requested target %s not available.' % new_target)
             print_target_list()
             sys.exit(1)
+
 
 def print_target_list():
     proj_type = get_project_type()

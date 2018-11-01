@@ -21,12 +21,15 @@ from kubos import target
 from kubos.utils.constants import *
 
 test_global_target = 'test-global-target'
+
+
 class Args():
     def __init__(self):
         self.set_target = None
         self.target = None
         self.list = None
         self.plain = []
+
 
 class TargetTest(unittest.TestCase):
     @patch('kubos.target.show_target')
@@ -65,7 +68,7 @@ class TargetTest(unittest.TestCase):
         get_target_list.assert_called()
         info.assert_has_calls(calls)
         namespace.assert_called_with(target_or_path=new_target, config=None, target=new_target,
-                                              set_target=new_target, save_global=False, no_install=False)
+                                     set_target=new_target, save_global=False, no_install=False)
         execCommand.assert_called_with(new_target_args, '')
 
     @patch('sys.exit')
@@ -80,8 +83,10 @@ class TargetTest(unittest.TestCase):
         target.set_target(new_target)
 
         get_target_list.assert_called()
-        info.assert_called_with('Setting Target: %s' % new_target.split('@')[0])
-        error.assert_called_with('Requested target %s not available.' % new_target)
+        info.assert_called_with('Setting Target: %s' %
+                                new_target.split('@')[0])
+        error.assert_called_with(
+            'Requested target %s not available.' % new_target)
         print_target_list.assert_called()
         sysexit.assert_called_with(1)
 
@@ -121,6 +126,7 @@ class TargetTest(unittest.TestCase):
 
         listdir.assert_called_with(test_global_target)
         join.assert_called_with(test_global_target, subdir, 'target.json')
+
 
 if __name__ == '__main__':
     unittest.main()

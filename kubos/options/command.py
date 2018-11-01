@@ -1,10 +1,12 @@
 import argparse
 import importlib
 
+
 class SDKCommand(object):
     def __init__(self, config, base_module, name, module_name, description, help=None):
         self.config = config
-        self.base_module = base_module #yotta or kubos - This is the base module we are importing the command from
+        # yotta or kubos - This is the base module we are importing the command from
+        self.base_module = base_module
         self.name = name
         self.module_name = module_name
         self.description = description
@@ -21,7 +23,8 @@ class SDKCommand(object):
         return self.module.execCommand(args, following_args)
 
     def onParserAdded(self, parser):
-        self.module = importlib.import_module('.' + self.module_name, self.base_module)
+        self.module = importlib.import_module(
+            '.' + self.module_name, self.base_module)
         self.module.addOptions(parser)
         parser.set_defaults(command=self.execCommand)
 
@@ -29,5 +32,6 @@ class SDKCommand(object):
 def add_command(config, subparser, *args, **kwargs):
     m = _command_class(config, *args, **kwargs)
     m.addToSubparser(subparser)
+
 
 _command_class = SDKCommand

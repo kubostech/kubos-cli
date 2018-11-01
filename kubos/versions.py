@@ -23,18 +23,20 @@ from yotta.options import parser
 from kubos.utils import git_utils
 from kubos.utils.constants import *
 
+
 def addOptions(parser):
-    parser.add_argument('-a', '--all-versions', dest='filter', action='store_false', default=True, help='Show all available versions')
+    parser.add_argument('-a', '--all-versions', dest='filter',
+                        action='store_false', default=True, help='Show all available versions')
 
 
 def execCommand(args, following_args):
     if not os.path.isdir(KUBOS_SRC_DIR):
-        logging.info('No versions are locally available. Please run `kubos update` to pull all of the available source versions.')
+        logging.info(
+            'No versions are locally available. Please run `kubos update` to pull all of the available source versions.')
         return 1
     repo = git_utils.get_repo(KUBOS_SRC_DIR)
     tag_list = git_utils.get_tag_list(repo)
-    latest   = git_utils.get_latest_tag(tag_list)
+    latest = git_utils.get_latest_tag(tag_list)
     logging.info('Available versions are:')
     git_utils.print_tag_list(tag_list, filter=args.filter)
     logging.info('The most recent release is: %s' % latest)
-

@@ -23,6 +23,7 @@ import sys
 from kubos.utils import sdk_utils
 from kubos.utils.constants import *
 
+
 def get_repo(path):
     repo = git.Repo(path)
     return repo
@@ -47,7 +48,7 @@ def filter_cd_generated_tags(display_num, tag_list):
     This function filters only the most recent display_num number of cd_generated_versions from tag_list.
     '''
     filtered_tags = []
-    ga_release_version   = re.compile('v?\d+\.\d+\.\d+')
+    ga_release_version = re.compile('v?\d+\.\d+\.\d+')
     cd_generated_version = re.compile('v?\d+\.\d+\.\d+\.\d+')
     for tag in tag_list:
         if cd_generated_version.match(tag):
@@ -63,7 +64,7 @@ def filter_cd_generated_tags(display_num, tag_list):
 def print_tag_list(tag_list, filter=True):
     active_version = get_active_kubos_version()
 
-    if filter:  #filter the CD Generated versions
+    if filter:  # filter the CD Generated versions
         tag_list = filter_cd_generated_tags(SHOW_NUMBER_CD_VERSIONS, tag_list)
 
     for tag in tag_list:
@@ -73,7 +74,7 @@ def print_tag_list(tag_list, filter=True):
 
 
 def get_latest_tag(tag_list):
-    latest_tag = '0.0.0' #Set to a dummy tag that will be less than any other valid tag
+    latest_tag = '0.0.0'  # Set to a dummy tag that will be less than any other valid tag
     for tag in tag_list:
         if packaging.version.parse(tag) > packaging.version.parse(latest_tag):
             latest_tag = tag
@@ -82,23 +83,27 @@ def get_latest_tag(tag_list):
 
 def fetch_tags(repo):
     origin = repo.remotes.origin
-    logging.info('Checking for newer releases...') #Tags mark new KubOS releases
+    # Tags mark new KubOS releases
+    logging.info('Checking for newer releases...')
     origin.fetch()
 
 
 def checkout_and_update_version(ref, repo):
-    tag_expr = re.compile('v?\d+\.\d+\.\d+\.*') #Tags follow the v?X.X.X convention
+    # Tags follow the v?X.X.X convention
+    tag_expr = re.compile('v?\d+\.\d+\.\d+\.*')
     is_tag = tag_expr.match(ref)
     logging.info("Checking out '%s'" % ref)
     if not is_tag:
-        logging.warning('Kubos branches are not guaranteed to be stable. Proceed with caution.')
+        logging.warning(
+            'Kubos branches are not guaranteed to be stable. Proceed with caution.')
     try:
         repo.git.checkout(ref)
-        if repo.git_dir == os.path.join(KUBOS_SRC_DIR, '.git'): #only set the version file for kubos source checkouts, not for example checkouts
+        # only set the version file for kubos source checkouts, not for example checkouts
+        if repo.git_dir == os.path.join(KUBOS_SRC_DIR, '.git'):
             update_version_file(ref)
     except:
         logging.error('There was an error checking out branch "%s"' % ref)
-        logging.debug('The error details are: %s' %  sys.exc_info()[0])
+        logging.debug('The error details are: %s' % sys.exc_info()[0])
 
 
 def update_version_file(version):
@@ -113,7 +118,7 @@ def clone_example_repo(repo_dir, repo_url):
     specify a specific version of the example repo.
     '''
     repo = clone_repo(repo_dir, repo_url)
-    tag_list   = get_tag_list(repo)
+    tag_list = get_tag_list(repo)
     latest_tag = get_latest_tag(tag_list)
     checkout_and_update_version(latest_tag, repo)
 
@@ -127,11 +132,12 @@ def clone_repo(repo_dir, repo_url):
             repo = git.Repo(repo_dir)
             logging.info('Repo %s already exists' % repo_url)
         fetch_tags(repo)
-        #Link the modules/targets from the kubos repo to the default, Global location
+        # Link the modules/targets from the kubos repo to the default, Global location
         sdk_utils.link_to_global_cache(KUBOS_SRC_DIR)
         return repo
     except git.exc.GitCommandError as e:
-        logging.error('Error: there was an error accessing the remote git repository...')
+        logging.error(
+            'Error: there was an error accessing the remote git repository...')
         logging.debug('The specific error is: \n\n %s' % e)
 
 
@@ -152,20 +158,21 @@ def set_active_kubos_version(set_tag, repo):
             found = True
             break
     if not found:
-        logging.error('The requested version "%s" is not an available version.' % set_tag)
+        logging.error(
+            'The requested version "%s" is not an available version.' % set_tag)
         logging.info('Available versions are: ')
         print_tag_list(tag_list)
         sys.exit(1)
 
 
 def check_provided_version(requested_version, repo):
-    #the repo paramenter allows this function to be used for the example project as well
+    # the repo paramenter allows this function to be used for the example project as well
     active_version = get_active_kubos_version()
     if requested_version == active_version:
-        logging.info('The requested version: %s is already active. There\'s nothing to do..' % requested_version)
+        logging.info(
+            'The requested version: %s is already active. There\'s nothing to do..' % requested_version)
         return
     set_active_kubos_version(requested_version, repo)
     if active_version:
         logging.info('Deactivating Kubos source version: %s' % active_version)
     logging.info('Activating Kubos source version %s' % requested_version)
-

@@ -20,7 +20,7 @@ import os
 import sys
 import unittest
 
-from yotta.test.cli.util import  Test_Trivial_Lib #
+from yotta.test.cli.util import Test_Trivial_Lib
 from yotta.test.cli.test_target import Test_Module_JSON
 from yotta import link, link_target
 
@@ -28,6 +28,7 @@ from kubos.utils import sdk_utils
 from kubos.test.utils import KubosTestCase
 
 from sets import Set
+
 
 class KubosSdkUtilsTest(KubosTestCase):
 
@@ -60,39 +61,38 @@ class KubosSdkUtilsTest(KubosTestCase):
         with open(self.target_json, 'w') as target_file:
             target_file.write(Test_Module_JSON)
 
-
     @mock.patch('yotta.link.execCommand', mock.MagicMock())
     @mock.patch('yotta.link_target.execCommand', mock.MagicMock())
     def test_link_target_to_proj(self):
         json_data = json.loads(Test_Module_JSON)
-        expected_args = { 'save_global': True,
-                          'module_or_path': json_data['name'],
-                          'target': 'x86-linux-native,*',
-                          'no_install': False,
-                          'target_or_path': json_data['name'],
-                          'config': None}
-        sdk_utils.run_link(self.module_json, self.dir_a) #Link the module to an arbitrary location
+        expected_args = {'save_global': True,
+                         'module_or_path': json_data['name'],
+                         'target': 'x86-linux-native,*',
+                         'no_install': False,
+                         'target_or_path': json_data['name'],
+                         'config': None}
+        # Link the module to an arbitrary location
+        sdk_utils.run_link(self.module_json, self.dir_a)
         link.execCommand.assert_called()
         link_target.execCommand.assert_not_called()
         args, kwargs = link.execCommand.call_args[0]
         self.assertEqual(expected_args, vars(args))
 
-
     @mock.patch('yotta.link.execCommand', mock.MagicMock())
     @mock.patch('yotta.link_target.execCommand', mock.MagicMock())
     def test_link_local_to_global_cache(self):
-        expected_args = { 'save_global': True,
-                          'module_or_path': None,
-                          'target': 'x86-linux-native,*',
-                          'no_install': False,
-                          'target_or_path': None,
-                          'config': None}
-        sdk_utils.run_link(self.target_json, None) #link test target to the "global cache" of targets
+        expected_args = {'save_global': True,
+                         'module_or_path': None,
+                         'target': 'x86-linux-native,*',
+                         'no_install': False,
+                         'target_or_path': None,
+                         'config': None}
+        # link test target to the "global cache" of targets
+        sdk_utils.run_link(self.target_json, None)
         link.execCommand.assert_not_called()
         link_target.execCommand.assert_called_once()
         args, kwargs = link_target.execCommand.call_args[0]
         self.assertEqual(expected_args, vars(args))
-
 
     @mock.patch('kubos.utils.sdk_utils.run_link', mock.MagicMock())
     def test_link_entities_discovery(self):
@@ -100,13 +100,12 @@ class KubosSdkUtilsTest(KubosTestCase):
         sdk_utils.link_entities(self.base_dir, None)
         self.assertEqual(sdk_utils.run_link.call_count, 2)
         call_list = sdk_utils.run_link.call_args_list
-        expected_args = [ self.module_json, self.target_json ]
+        expected_args = [self.module_json, self.target_json]
         idx = 0
         for call in call_list:
             args, kwargs = call[0]
             self.assertTrue(args in expected_args)
             idx = idx + 1
-
 
     def test_get_all_eligible_targets(self):
         '''
@@ -132,10 +131,9 @@ class KubosSdkUtilsTest(KubosTestCase):
         with open(os.path.join(self.dir_d, target_json), 'w') as target_file:
             target_file.write(inherit_json % ('target_c', 'target_b'))
 
-        #Now the actual testing bits
+        # Now the actual testing bits
         targets = sdk_utils.get_all_eligible_targets(self.base_dir)
         self.assertEqual(targets, expected_targets)
-
 
     def tearDown(self):
         super(KubosSdkUtilsTest, self).tearDown()

@@ -24,23 +24,30 @@ import os
 from yotta.options import parser
 
 from kubos.utils import git_utils, \
-                        sdk_utils, \
-                        status_spinner
+    sdk_utils, \
+    status_spinner
 from kubos.utils.constants import *
 
 KUBOS_CLI_REPO_URL = 'git+https://github.com/kubos/kubos-cli'
-INSTALL_COMMAND    = ['sudo', 'pip', 'install', '--upgrade', KUBOS_CLI_REPO_URL]
+INSTALL_COMMAND = ['sudo', 'pip', 'install', '--upgrade', KUBOS_CLI_REPO_URL]
+
 
 def addOptions(parser):
-    parser.add_argument('set_version', nargs='?', default=None, help='Specify a version of the kubos source to use.')
-    parser.add_argument('-l', '--latest', action='store_true', default=False, help='Default to the most recent release of Kubos modules')
+    parser.add_argument('set_version', nargs='?', default=None,
+                        help='Specify a version of the kubos source to use.')
+    parser.add_argument('-l', '--latest', action='store_true', default=False,
+                        help='Default to the most recent release of Kubos modules')
 
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('-s', '--source',  dest='component', action='store_const', const='s', default=False, help='Update only the source Kubos modules')
-    group.add_argument('-c', '--cli',     dest='component', action='store_const', const='c', default=False, help='Update the Kubos CLI.')
-    group.add_argument('-a', '--all',     dest='component', action='store_const', const='a', default=False, help='Update both the Kubos source modules and the Kubos CLI')
-    group.add_argument('-t', '--tab-completion', dest='component', action='store_const', const='t', default=False, help='Update the tab completion definitions')
-    #The default behavior is to only update the source modules.
+    group.add_argument('-s', '--source',  dest='component', action='store_const',
+                       const='s', default=False, help='Update only the source Kubos modules')
+    group.add_argument('-c', '--cli',     dest='component', action='store_const',
+                       const='c', default=False, help='Update the Kubos CLI.')
+    group.add_argument('-a', '--all',     dest='component', action='store_const', const='a',
+                       default=False, help='Update both the Kubos source modules and the Kubos CLI')
+    group.add_argument('-t', '--tab-completion', dest='component', action='store_const',
+                       const='t', default=False, help='Update the tab completion definitions')
+    # The default behavior is to only update the source modules.
     parser.set_defaults(component='s')
 
 
@@ -60,8 +67,9 @@ def update_cli():
     if return_code == 0:
         logging.info('Successfully updated the Kubos CLI module')
     else:
-        #The subprocess stdout/stderr is printed to the console. Any errors that occur will be visible there.
-        logging.error('There was an issue updating the Kubos CLI module. See the above log for the error details.')
+        # The subprocess stdout/stderr is printed to the console. Any errors that occur will be visible there.
+        logging.error(
+            'There was an issue updating the Kubos CLI module. See the above log for the error details.')
 
 
 def update_source_modules(args):
@@ -72,7 +80,8 @@ def update_source_modules(args):
     spinner = status_spinner.start_spinner()
     src_repo = git_utils.clone_repo(KUBOS_SRC_DIR, KUBOS_SRC_URL)
     git_utils.clone_example_repo(KUBOS_RT_EXAMPLE_DIR, KUBOS_RT_EXAMPLE_URL)
-    git_utils.clone_example_repo(KUBOS_LINUX_EXAMPLE_DIR, KUBOS_LINUX_EXAMPLE_URL)
+    git_utils.clone_example_repo(
+        KUBOS_LINUX_EXAMPLE_DIR, KUBOS_LINUX_EXAMPLE_URL)
     status_spinner.stop_spinner(spinner)
     set_version = args.set_version
     if set_version:
@@ -87,21 +96,26 @@ def update_source_modules(args):
 def update_tab_completions():
     logging.info("Setting up kubos tab completions...")
     if os.path.isdir(COMPLETION_LINK_DEST):
-        shutil.rmtree(COMPLETION_LINK_DEST) #shutil.copytree requires the dest to not exist
+        # shutil.copytree requires the dest to not exist
+        shutil.rmtree(COMPLETION_LINK_DEST)
     try:
         shutil.copytree(COMPLETION_RESOURCE_DIR, COMPLETION_LINK_DEST)
     except OSError:
-        logging.info('The link %s to %s already exists.' % (COMPLETION_RESOURCE_DIR, COMPLETION_LINK_DEST))
+        logging.info('The link %s to %s already exists.' %
+                     (COMPLETION_RESOURCE_DIR, COMPLETION_LINK_DEST))
 
     completion_file = os.path.join(COMPLETION_LINK_DEST, 'kubos_completion')
-    shell    = os.environ['SHELL'] if 'SHELL' in os.environ else None
-    username = os.environ['USER']  if 'USER'  in os.environ else None
+    shell = os.environ['SHELL'] if 'SHELL' in os.environ else None
+    username = os.environ['USER'] if 'USER' in os.environ else None
     if 'bash' not in shell:
-        logging.warning('Currently Bash is the only officially supported shell for tab completions.')
-        logging.warning("If you want to manually continue source the %s file to configure the kubos completions via the complete command." % completion_file)
-        logging.warning("Beware: This is not supported and there is no guarantee this will actually work with your current shell: %s" % shell)
+        logging.warning(
+            'Currently Bash is the only officially supported shell for tab completions.')
+        logging.warning(
+            "If you want to manually continue source the %s file to configure the kubos completions via the complete command." % completion_file)
+        logging.warning(
+            "Beware: This is not supported and there is no guarantee this will actually work with your current shell: %s" % shell)
         sys.exit(1)
-    if username != 'vagrant': #this is done during the vagrant provisioning
-        logging.info("If this is your first time setting up tab completion you will need to add the following line to your bash startup file of choice (.bashrc, .profile, etc")
+    if username != 'vagrant':  # this is done during the vagrant provisioning
+        logging.info(
+            "If this is your first time setting up tab completion you will need to add the following line to your bash startup file of choice (.bashrc, .profile, etc")
         logging.info("source %s" % completion_file)
-

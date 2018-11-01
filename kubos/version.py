@@ -24,12 +24,16 @@ from yotta.options import parser
 from kubos.utils import git_utils
 from kubos.utils.constants import KUBOS_SRC_DIR
 
+
 def addOptions(parser):
-    parser.add_argument('-l', '--list', action='store_true', default=False, help='List all of the locally available KubOS source versions')
+    parser.add_argument('-l', '--list', action='store_true', default=False,
+                        help='List all of the locally available KubOS source versions')
+
 
 def execCommand(args, following_args):
     kubos_version = git_utils.get_active_kubos_version()
-    logging.info('Kubos-CLI version    : %s' % 'v' + get_installed_version('kubos-cli'))
+    logging.info('Kubos-CLI version    : %s' %
+                 'v' + get_installed_version('kubos-cli'))
     logging.info('Kubos Source version : %s' % kubos_version)
 
     if not kubos_version:
@@ -39,8 +43,10 @@ def execCommand(args, following_args):
             logging.info('There\'s not an active Kubos source version..')
             logging.info('The available versions are:')
             git_utils.print_tag_list(version_list, filter=True)
-            logging.info('Please run kubos use <version> (with one of the above versions)' + \
-                  'to checkout a version of the source before working with a project.')
+            logging.info('Please run kubos use <version> (with one of the above versions)' +
+                         'to checkout a version of the source before working with a project.')
         else:
-            logging.info('There are not any local versions of the kubos source currently.')
-            logging.info('Please run `kubos update` to pull the kubos source before running `kubos version` again')
+            logging.info(
+                'There are not any local versions of the kubos source currently.')
+            logging.info(
+                'Please run `kubos update` to pull the kubos source before running `kubos version` again')

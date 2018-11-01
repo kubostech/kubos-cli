@@ -26,6 +26,7 @@ from pip.utils import get_installed_version
 
 from kubos.utils.sdk_utils import get_sdk_attribute
 
+
 def load_config():
     return _config_class()
 
@@ -39,11 +40,12 @@ class KubosSDKConfig(object):
 
     def __init__(self):
         self.appdirs = AppDirs('kubos')
-        self.config_path = os.path.join(self.appdirs.user_config_dir, 'kubos-cli.json')
+        self.config_path = os.path.join(
+            self.appdirs.user_config_dir, 'kubos-cli.json')
         self.sdk_version = load_sdk_version()
         self.load_config()
         #thread = threading.Thread(target=self.ping)
-        #thread.start()
+        # thread.start()
 
     def load_config(self):
         self.config = {}
@@ -62,13 +64,16 @@ class KubosSDKConfig(object):
         if 'uuid' in self.config:
             uid = self.config['uuid']
         else:
-            uid = uuid.uuid4().hex #uuid4 generates a completely random uuid
+            uid = uuid.uuid4().hex  # uuid4 generates a completely random uuid
             self.config['uuid'] = uid
             self.save_config()
         data = self.json_template % (time.time(), uid)
         try:
-            requests.post("https://drvpjfu9ci.execute-api.us-east-1.amazonaws.com/prod/AnalyticsTest", data=data) # This URL needs to be changed to the production DynamoDB endpoint
+            # This URL needs to be changed to the production DynamoDB endpoint
+            requests.post(
+                "https://drvpjfu9ci.execute-api.us-east-1.amazonaws.com/prod/AnalyticsTest", data=data)
         except:
             pass
+
 
 _config_class = KubosSDKConfig

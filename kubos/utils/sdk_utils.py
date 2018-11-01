@@ -25,12 +25,14 @@ import yotta.link_target
 from sets import Set
 from kubos.utils.constants import *
 
+
 def get_sdk_attribute(attr):
     sdk_data = json.load(open(SDK_MODULE_JSON, 'r'))
     if attr in sdk_data:
         return sdk_data[attr]
     else:
         return None
+
 
 def get_module_name(path):
     if not os.path.isfile(path):
@@ -41,8 +43,8 @@ def get_module_name(path):
 
 
 def is_module_or_target_root(entity_name):
-    #Determine if the directory name is at the root of a module or target
-    #The module.json and target.json file names mark the "root" of a module
+    # Determine if the directory name is at the root of a module or target
+    # The module.json and target.json file names mark the "root" of a module
     marker_names = ['module.json',
                     'target.json']
     return entity_name in marker_names
@@ -66,10 +68,11 @@ def link_entities(src, dst):
     roots ie. where a module.json or target.json file exists once a root is found, the
     linking function is called.
     '''
-    logging.disable(logging.WARNING) #suppress yotta warning for linking non-required modules and targets
+    logging.disable(
+        logging.WARNING)  # suppress yotta warning for linking non-required modules and targets
     for subdir in os.listdir(src):
-        #loop through the subdirectories of src
-        #but don't go down the rabbit hole of yotta_module symlinks
+        # loop through the subdirectories of src
+        # but don't go down the rabbit hole of yotta_module symlinks
         if "yotta_modules" in subdir:
             continue
         if "yotta_targets" in subdir:
@@ -78,12 +81,12 @@ def link_entities(src, dst):
             continue
         cur_dir = os.path.join(src, subdir)
         if is_module_or_target_root(subdir):
-            #if we're pointing to a target.json or module.json - link the module and return
-            #NOTE: This assumes there are not nested modules
+            # if we're pointing to a target.json or module.json - link the module and return
+            # NOTE: This assumes there are not nested modules
             run_link(cur_dir, dst)
             return
         elif os.path.isdir(cur_dir):
-            #if we're looking at a subdirectory recursively search for a module root
+            # if we're looking at a subdirectory recursively search for a module root
             link_entities(cur_dir, dst)
 
 
@@ -94,12 +97,12 @@ def run_link(src, dst):
     '''
     link_module = yotta.link if 'module' in src else yotta.link_target
     if dst:
-        #we're linking to a project from the global cache so we need to link the module by name
+        # we're linking to a project from the global cache so we need to link the module by name
         entity_name = get_module_name(src)
         path = dst
     else:
-        #we're linking to the global cache, the default behavior of a None module/target name
-        #is linking it to the global cache.
+        # we're linking to the global cache, the default behavior of a None module/target name
+        # is linking it to the global cache.
         entity_name = None
         path = os.path.dirname(src)
     start_dir = os.getcwd()
@@ -140,7 +143,7 @@ def get_target_lists():
     rt_list = []
     target_list = get_all_eligible_targets(GLOBAL_TARGET_PATH)
 
-    #TODO: Get a better way of determining linux targets
+    # TODO: Get a better way of determining linux targets
     for target in target_list:
         if 'linux' in target:
             linux_list.append(target)
@@ -158,9 +161,9 @@ def get_all_eligible_targets(path):
     The other targets in the hierarchy are not meant to be built against
     '''
     inherit_key = 'inherits'
-    name_key    = 'name'
+    name_key = 'name'
     ineligible_set = Set()
-    complete_set   = Set()
+    complete_set = Set()
     target_dir_list = os.listdir(path)
 
     for subdir in target_dir_list:
@@ -168,7 +171,7 @@ def get_all_eligible_targets(path):
         if name_key in json_data:
             complete_set.add(json_data['name'])
         if inherit_key in json_data:
-            #The target this current target depends on is an ineligible target
+            # The target this current target depends on is an ineligible target
             target_dependency = json_data[inherit_key].keys()
             ineligible_set.add(*target_dependency)
     return complete_set - ineligible_set
@@ -191,7 +194,7 @@ def refresh_target_cache():
 
     rt_targets, linux_targets = get_target_lists()
     data[LINUX_KEY] = linux_targets
-    data[RT_KEY]    = rt_targets
+    data[RT_KEY] = rt_targets
     with open(KUBOS_TARGET_CACHE_FILE, 'w') as target_file:
         target_file.write(json.dumps(data))
 
@@ -202,8 +205,8 @@ def load_target_list(platform):
     with open(KUBOS_TARGET_CACHE_FILE, 'r') as json_file:
         data = json.loads(json_file.read())
     linux_targets = data[LINUX_KEY]
-    rt_targets    = data[RT_KEY]
-    if platform == None: #if no platform is listed in the module.json, dont restrict the target type
+    rt_targets = data[RT_KEY]
+    if platform == None:  # if no platform is listed in the module.json, dont restrict the target type
         return linux_targets + rt_targets
     elif platform == 'linux':
         return linux_targets
@@ -232,8 +235,8 @@ def get_project_type():
             else:
                 return 'linux'
         else:
-            #This project doesn't have a dependencies field. This is most likely running in a unit testing context
+            # This project doesn't have a dependencies field. This is most likely running in a unit testing context
             return None
     else:
-        #There is no module.json
+        # There is no module.json
         return None

@@ -15,16 +15,18 @@
 
 from yotta.lib.cmakegen import *
 
+
 class KubosCMakeGen(CMakeGen):
     def _kCheckImmediateDeps(self, deps):
         # make a copy so we don't recurse
         new_deps = {}
         dep_items = [i for i in deps.items()]
         for name, component in dep_items:
-            if component.isTestDependency(): continue
+            if component.isTestDependency():
+                continue
             if component.getLinkWholeArchive():
                 # surround 'whole archive' libs with the proper linker args
-                new_key = ('${YOTTA_LINK_WHOLE_ARCHIVE_PRE} ' \
+                new_key = ('${YOTTA_LINK_WHOLE_ARCHIVE_PRE} '
                            '%s ${YOTTA_LINK_WHOLE_ARCHIVE_POST}') % name
                 new_deps[new_key] = deps[name]
             else:
@@ -44,5 +46,6 @@ class KubosCMakeGen(CMakeGen):
                                                              deps, object_name,
                                                              resource_subdirs,
                                                              is_executable)
+
 
 CMakeGen = KubosCMakeGen
